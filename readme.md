@@ -1,9 +1,9 @@
 # Simple Kubernetes Setup
 
 ## Frontend
-- Simple React/TS frontend SPA created with `create-react-app`.
+- Simple React/TS frontend SPA created with `create-react-app` tool.
 - Allows a user to initiate load testing on the backend.
-- Contains a Web Worker that pings the backend to simulate an active user environment.
+- Contains a Web Worker that pings the backend to simulate some real world environment.
 
 ## Backend
 - Java Spring Boot endpoints for load testing.

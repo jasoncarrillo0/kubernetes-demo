@@ -1,0 +1,53 @@
+# CONFIG MAP ------------------------
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: go-backend-config
+data:
+  HOST: postgresql-0.postgresql.default.svc.cluster.local
+  DB_PORT: "5432"
+  PORT: :80
+  USER: postgres
+  PASSWORD: postgres
+  DB_NAME: main_service
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-server-ip-service
+spec:
+  selector:
+    app: go-server
+  ports:
+  - name: http
+    port: 8081
+    targetPort: 8081
+
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-server
+spec:
+  replicas: 1 # number of replicas
+  selector:
+    matchLabels:
+      app: go-server
+  template:
+    metadata:
+      labels:
+        app: go-server
+    spec:
+      containers:
+        - name: go-server
+          image: prometheusdemo/go-server # specify your react image and tag
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8081 # specify the container port to listen on, should correspond to targetPort defined in service
+          envFrom:
+          - configMapRef:
+              name: go-backend-config
+      

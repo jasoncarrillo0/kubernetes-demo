@@ -1,0 +1,6 @@
+CREATE TABLE requests(
+    id serial PRIMARY KEY,
+    data jsonb NOT NULL,
+    ts TIMESTAMP NOT NULL DEFAULT NOW(),
+    tstz TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

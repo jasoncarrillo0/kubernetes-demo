@@ -1,0 +1,86 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgresql-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+  #storageClassName: yourClass
+---
+
+
+# Headless IP service ------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql
+spec:
+  selector:
+    app: postgresql
+  ports:
+    - name: postgresql-port
+      port: 5432
+      targetPort: 5432
+  clusterIP: None
+
+---
+
+# Secrets in case we want to check yaml into repo ------------------------
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-credentials
+type: Opaque
+data:
+  POSTGRES_USER: cG9zdGdyZXM=
+  POSTGRES_PASSWORD: cG9zdGdyZXM=
+---
+
+# reachable at: postgresql-0.postgresql.default.svc.cluster.local
+# to login to db: psql -h localhost -U postgres in terminal
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+  serviceName: postgresql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      containers:
+        - name: postgresql
+          image: postgres:15.2-bullseye
+          envFrom:
+          - secretRef:
+              name: postgres-credentials
+          ports:
+            - name: postgresql-port
+              containerPort: 5432
+          volumeMounts:
+            - name: postgresql-persistent-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgresql-persistent-storage
+          persistentVolumeClaim:
+            claimName: postgresql-pv-claim
+  volumeClaimTemplates:
+    - metadata:
+        name: postgresql-pv-claim
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+

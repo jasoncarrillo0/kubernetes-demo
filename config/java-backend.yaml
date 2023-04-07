@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: java-server-ip-service
+spec:
+  selector:
+    app: java-server
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-server
+spec:
+  replicas: 1 # number of replicas
+  selector:
+    matchLabels:
+      app: java-server
+  template:
+    metadata:
+      labels:
+        app: java-server
+    spec:
+      containers:
+        - name: java-server
+          image: prometheusdemo/java-server # specify your react image and tag
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080 # container will listen here. should correspond to targetPort defined in service.
+       

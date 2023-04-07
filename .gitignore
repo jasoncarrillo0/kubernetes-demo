@@ -1,0 +1,16 @@
+frontend/node_modules
+frontend/.env
+frontend/README.md
+
+go-server/db/docker-compose.yml
+go-server/db/data/*
+go-server/.env
+go-server/build_run.sh
+go-server/log.sh
+go-server/notes.txt
+go-server/server
+
+java-server/.vscode
+java-server/notes.txt
+*.properties
+*.txt
